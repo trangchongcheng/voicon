@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/setting_imgAvatarFrom"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_avatar" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/setting_imgAvatarTo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_avatar" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/setting_tvNameFrom"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/avatar_me" />
+
+        <TextView
+            android:id="@+id/setting_tvNameTo"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/avatar_voicon" />
+    </LinearLayout>
+    <EditText
+        android:hint="@string/name_me"
+        android:id="@+id/setting_edtNameFrom"
+        style="@style/editext_start"/>
+    <EditText
+        android:hint="@string/name_voicon"
+        android:id="@+id/setting_editNameTo"
+        style="@style/editext_start"/>
+    <TextView
+        android:layout_margin="16dp"
+        android:layout_gravity="center"
+        android:text="@string/language"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/setting_tvLanguage"/>
+    <RadioGroup
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/setting_rbtnTiengViet"
+            android:checked="true"
+            android:text="Vietnamese"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <RadioButton
+            android:id="@+id/setting_rbtnEnglish"
+            android:text="English"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
+    <Button
+        android:id="@+id/setting_btnChange"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:text="@string/change"
+        android:layout_margin="16dp"
+        android:background="@drawable/config_click_login"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

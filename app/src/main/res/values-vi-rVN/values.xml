@@ -1,0 +1,40 @@
+<resources>
+
+    <string name="app_name">Voi Con</string>
+    <string name="viet_tin_nhan">Viết tin nhắn</string>
+    <string name="title">(Android WebSockets Chat App)</string>
+    <string name="author_name">By Ravi Tamada</string>
+    <string name="author_url">www.androidhive.info</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="btn_join">JOIN</string>
+    <string name="btn_send">Send</string>
+    <string name="tai_ve">Download</string>
+    <string name="play">Play</string>
+    <string name="title_dialog">Bạn muốn voi con làm gì?</string>
+
+
+    <string name="gpvch_header">Ứng dụng có phiên bản !</string>
+    <string name="gpvch_button_positive">Update phiên bản mới ngay nào!</string>
+    <string name="gpvch_button_negative">Nhắc nhở mới</string>
+    <string name="gpvch_new_version_info_title">Có gì </string>
+
+    <string name="chup_man_hinh">Đã chụp ảnh màn hình thành công!(Thư mục Sceenshots)</string>thoát
+    <string name ="exit">Bấm thêm lần nữa để thoát</string>s
+    <string name ="nhap">Vui lòng nhập vào ô Chat</string>
+    <string name="khong_tim_thay">Không tìm thấy kết quả</string>
+    <string name="mp3_error">Bài hát không hỗ trợ chất lượng này</string>
+    <string name="da_tai_xong">Đã tải xong</string>
+    <string name="help">Voi con có thể giúp được gì cho bạn nào?</string>
+    <string name="avatar_me">Chọn Avatar bạn</string>
+    <string name="avatar_voicon">Chọn Avatar Voi Con</string>
+    <string name="name_me">Nhập vào tên bạn</string>
+    <string name="name_voicon">Nhập vào tên Voi Con</string>
+    <string name="language">Ngôn ngữ Chat</string>
+    <string name="change">Thay đổi</string>
+    <string name="dang_tai">Đang tải về</string>
+    <string name="khong_co_ket_noi">Không tìm thấy ý mạng</string>
+    <string name="kiem_tra_ket_noi">Vui lòng kiểm tra lại mạng Internet và thử lại</string>
+    <string name="dong_y">Đồng ý</string>
+    <string name="bat_mang">Bật mạng</string>
+
+</resources>

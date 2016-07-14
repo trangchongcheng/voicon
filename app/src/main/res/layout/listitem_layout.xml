@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:gravity="top">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:padding="5dp"
+                android:id="@+id/listitem_tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="sdasd"
+                android:textColor="@color/lblFromName"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:id="@+id/listitem_tvFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Voi con"
+                android:textColor="@color/lblFromName"
+                android:textSize="15sp"
+                android:textStyle="bold|italic" />
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/listitem_profile_image"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_app" />
+
+        <ListView
+            android:divider="#00000000"
+            android:listSelector="@android:color/transparent"
+            android:id="@+id/listitem_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical"
+            android:scrollingCache="true"
+            android:smoothScrollbar="true" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

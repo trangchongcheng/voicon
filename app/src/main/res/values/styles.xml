@@ -1,0 +1,21 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/actionbar</item>
+        <item name="colorPrimaryDark">@color/bg_msg_you</item>
+        <item name="colorAccent">@color/actionbar</item>
+    </style>
+
+    <style name="editext_start">
+        <item name="android:maxLength">10</item>
+        <item name="android:inputType">text</item>
+        <item name="android:layout_marginLeft">32dp</item>
+        <item name="android:layout_marginRight">32dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+</resources>

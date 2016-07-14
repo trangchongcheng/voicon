@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingTop="5dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="80dp"
+        android:background="@drawable/bg_msg_from"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <TextView
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:text="hihi do ngoc"
+            android:id="@+id/txtMsg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/server_status_bar"
+            android:textSize="15sp" />
+            <ImageView
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:src="@drawable/config_click_image"
+                android:id="@+id/btnPlay"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/config_click_download"
+                android:visibility="gone"
+                android:text="Stop"
+                android:id="@+id/btnDownload"
+                android:layout_width="25dp"
+                android:layout_height="25dp" />
+
+    </LinearLayout>
+</LinearLayout>

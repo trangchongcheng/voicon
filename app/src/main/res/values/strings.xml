@@ -1,0 +1,40 @@
+<resources>
+
+    <string name="app_name">Elephant Chat</string>
+    <string name="viet_tin_nhan">Enter a Message</string>
+    <string name="title">(Android WebSockets Chat App)</string>
+    <string name="author_name">By Ravi Tamada</string>
+    <string name="author_url">www.androidhive.info</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="btn_join">JOIN</string>
+    <string name="btn_send">Send</string>
+    <string name="tai_ve">Download</string>
+    <string name="play">Play</string>
+    <string name="title_dialog">Bạn muốn voi con làm gì?</string>
+
+
+    <string name="gpvch_header">New version is available!</string>
+    <string name="gpvch_button_positive">Update current version</string>
+    <string name="gpvch_button_negative">Remind me later</string>
+    <string name="gpvch_new_version_info_title">Whats new:</string>
+
+    <string name="chup_man_hinh">Screen capture was successful!(Folder: Sceenshots)</string>thoát
+    <string name ="exit">Press again to exit</string>s
+    <string name ="nhap">Please Input to Chat Box</string>
+    <string name="khong_tim_thay">Not Found</string>
+    <string name="mp3_error">Bài hát không hỗ trợ chất lượng này</string>
+    <string name="da_tai_xong">Đã tải xong</string>
+    <string name="help">Can  help you??</string>
+    <string name="avatar_me">Avatar for You</string>
+    <string name="avatar_voicon">Avatar for Elephant Chat</string>
+    <string name="name_me">Input You Name</string>
+    <string name="name_voicon">Input Elephant Chat Name</string>
+    <string name="language">Language Chat</string>
+    <string name="change">Changage</string>
+    <string name="dang_tai">Downloading</string>
+    <string name="khong_co_ket_noi">Network not found</string>
+    <string name="kiem_tra_ket_noi">Please check network and try again</string>
+    <string name="dong_y">Yes</string>
+    <string name="bat_mang">Enabled network</string>
+
+</resources>
