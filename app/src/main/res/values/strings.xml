@@ -18,6 +18,7 @@
     <string name="gpvch_button_negative">Remind me later</string>
     <string name="gpvch_new_version_info_title">Whats new:</string>
 
+    <string name="tra_loi">Waiting...</string>
     <string name="chup_man_hinh">Screen capture was successful!(Folder: Sceenshots)</string>thoát
     <string name ="exit">Press again to exit</string>s
     <string name ="nhap">Please Input to Chat Box</string>

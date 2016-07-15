@@ -32,12 +32,14 @@ import android.view.animation.TranslateAnimation;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cheng.robotchat.voicon.activity.MainCreenActivity;
 import com.cheng.robotchat.voicon.activity.MessagesListAdapter;
 import com.cheng.robotchat.voicon.activity.VideoActivity;
 import com.cheng.robotchat.voicon.interfaces.OnReturnObject;
@@ -49,6 +51,8 @@ import com.cheng.robotchat.voicon.services.ApiService;
 import com.cheng.robotchat.voicon.services.GetJSONObject;
 import com.cheng.robotchat.voicon.ultils.Session;
 import com.cheng.robotchat.voicon.R;
+import com.romainpiel.shimmer.Shimmer;
+import com.romainpiel.shimmer.ShimmerTextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,6 +86,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     private ArrayList<User> arrUser;
     private User user;
     private String time;
+    private Shimmer shimmer;
     private MediaPlayer player;
     private MessagesListAdapter adapter;
     private List<Message> listMessages;
@@ -89,7 +94,6 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     private double finalTime = 0;
     private Handler myHandler = new Handler();
     public static int oneTimeOnly = 0;
-    private SeekBar seekBar;
     private double positionPause = 0;
     int id = 1;
 
@@ -97,7 +101,8 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     ImageView imgSend;
     @BindView(R.id.fragment_chat_imgClose)
     ImageView imgClose;
-
+    @BindView(R.id.tvWaiting)
+    ShimmerTextView tvWaiting;
     @OnClick(R.id.fragment_chat_imgClose)
     void onClose() {
         if (player != null) {
@@ -120,7 +125,8 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     RelativeLayout ll;
     @BindView(R.id.fragment_chat_imgPlay)
     ImageView img;
-
+    @BindView(R.id.llChat)
+    LinearLayout llChat;
     boolean isPause = false;
 
     @OnClick(R.id.fragment_chat_imgPlay)
@@ -143,14 +149,16 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
         time = DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()) + "<br>";
         String data = edtMessages.getText().toString().trim().replace(" ", "%20");
         String params = GetSesion(data, arrUser.get(0).getmLanguage());
-
         if (!data.equals("")) {
-            listMessages.add(new Message(arrUser.get(0).getmImageFrom(),arrUser.get(0).getmNameFrom(), getTime(), edtMessages.getText().toString().trim(), true));
+            listMessages.add(new Message(arrUser.get(0).getmImageFrom(), arrUser.get(0).getmNameFrom(), getTime(), edtMessages.getText().toString().trim(), true));
             adapter.notifyDataSetChanged();
             new GetJSONObject(getActivity(),
                     "http://vnbot.azurewebsites.net/api/bot?data=" + data + params, "", ApiService.ApiResquestType.TYPE_GET, ChatFragment.this).execute();
 
             edtMessages.setText("");
+            tvWaiting.setVisibility(View.VISIBLE);
+            //llChat.setEnabled(false);
+            enableDisableView(llChat,false);
         } else {
             Toast.makeText(getActivity(), getString(R.string.nhap), Toast.LENGTH_SHORT).show();
         }
@@ -182,24 +190,22 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
         userDataHelper = new UserDataHelper(getActivity());
         arrUser = userDataHelper.getAllArticle();
         ButterKnife.bind(this, view);
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
             }
         }
-
+        Log.d(TAG, "onCreateView: " + getActivity().getClass().getSimpleName());
         Animation mAnimation = new TranslateAnimation(0, 300,
                 0, 0);
         mAnimation.setDuration(15000);
         mAnimation.setRepeatMode(Animation.RESTART);
         mAnimation.setRepeatCount(Animation.INFINITE);
         tvNameSong.setAnimation(mAnimation);
+        toggleAnimation(view);
         listMessages = new ArrayList<Message>();
         adapter = new MessagesListAdapter(getActivity(), listMessages, this);
         lvMessages.setAdapter(adapter);
-
         return view;
     }
 
@@ -210,6 +216,28 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
 
 
     }
+
+    private void enableDisableView(View view, boolean enabled) {
+        view.setEnabled(enabled);
+
+        if ( view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup)view;
+
+            for ( int idx = 0 ; idx < group.getChildCount() ; idx++ ) {
+                enableDisableView(group.getChildAt(idx), enabled);
+            }
+        }
+    }
+
+    public void toggleAnimation(View target) {
+        if (shimmer != null && shimmer.isAnimating()) {
+            shimmer.cancel();
+        } else {
+            shimmer = new Shimmer();
+            shimmer.start(tvWaiting);
+        }
+    }
+
 
     public String getTime() {
         DateFormat df = new SimpleDateFormat("h:mm:a");
@@ -233,12 +261,12 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     @Override
     public void onReturnObjectFinish(JSONObject object) throws JSONException {
         if (object == null) {
-            listMessages.add(new Message(arrUser.get(0).getmImageFrom(),arrUser.get(0).getmNameFrom(), getTime(), "Lỗi kết nối mạng vui lòng thử lại (@_@)", true));
+            listMessages.add(new Message(arrUser.get(0).getmImageFrom(), arrUser.get(0).getmNameFrom(), getTime(), "Lỗi kết nối mạng vui lòng thử lại (@_@)", true));
             adapter.notifyDataSetChanged();
-        }else  {
-                String value = null;
-                try {
-                    value = object.getString("Value");
+        } else {
+            String value = null;
+            try {
+                value = object.getString("Value");
 
                 String isDownload = object.getString("IsDownload");
                 String type = object.getString("Type");
@@ -256,68 +284,72 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
                         );
                     }
                 }
-                listMessages.add(new Message(arrUser.get(0).getmImageTo(),arrUser.get(0).getmNameTo(), getTime(), value, isDownload, type, link, false));
+                listMessages.add(new Message(arrUser.get(0).getmImageTo(), arrUser.get(0).getmNameTo(), getTime(), value, isDownload, type, link, false));
                 adapter.notifyDataSetChanged();
                 playBeep();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    listMessages.add(new Message(arrUser.get(0).getmImageFrom(),arrUser.get(0).getmNameFrom(), getTime(), "Nội dung bạn nhập không hợp lệ", true));
-                    adapter.notifyDataSetChanged();
-                }
+                tvWaiting.setVisibility(View.GONE);
+                enableDisableView(llChat,true);
+              //  llChat.setEnabled(true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                listMessages.add(new Message(arrUser.get(0).getmImageFrom(), arrUser.get(0).getmNameFrom(), getTime(), "Nội dung bạn nhập không hợp lệ", true));
+                adapter.notifyDataSetChanged();
             }
         }
+    }
 
     @Override
     public void onPassPlayLink(final String type, final String url, final String title) {
-               getActivity().runOnUiThread(new Runnable() {
-                   @Override
-                   public void run() {
-                       if (type.equals("Mp3")) {
-                           Log.d(TAG, "onPassPlayLink: " + url);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (type.equals("Mp3")) {
+                    Log.d(TAG, "onPassPlayLink: " + url);
 
-                               if (player != null) {
-                                   player.stop();
-                                   player.release();
-                                   player = null;
-                               }
-                               // Log.d(TAG, "onPassPlayLink: " + player.isPlaying());
-                               player = new MediaPlayer();
-                               player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                           try {
-                               player.setDataSource(url);
-                               player.prepare();
-                               player.start();
+                    if (player != null) {
+                        player.stop();
+                        player.release();
+                        player = null;
+                    }
+                    // Log.d(TAG, "onPassPlayLink: " + player.isPlaying());
+                    player = new MediaPlayer();
+                    player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    try {
+                        player.setDataSource(url);
+                        player.prepare();
+                        player.start();
 
-                               ll.setVisibility(View.VISIBLE);
-                               ll.startAnimation(AnimationUtils.loadAnimation(getActivity(),
-                                       R.anim.slid_down));
-                               finalTime = player.getDuration();
-                               startTime = player.getCurrentPosition();
+                        ll.setVisibility(View.VISIBLE);
+                        ll.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+                                R.anim.slid_down));
+                        finalTime = player.getDuration();
+                        startTime = player.getCurrentPosition();
 
-                               //seekBar.setProgress(0);
-                               // tvDuraion.setText(startTime+"%");
-                               tvNameSong.setText(title);
-                               myHandler.postDelayed(UpdateSongTime, 100);
+                        //seekBar.setProgress(0);
+                        // tvDuraion.setText(startTime+"%");
+                        tvNameSong.setText(title);
+                        myHandler.postDelayed(UpdateSongTime, 100);
 
-                               //progressBar.dismiss();
-                           } catch (Exception e) {
-                               //  progressBar.dismiss()\;
-                               e.printStackTrace();
-                               ll.setVisibility(View.GONE);
-                               Toast.makeText(getActivity(), getString(R.string.mp3_error), Toast.LENGTH_SHORT).show();
-                           }
+                        //progressBar.dismiss();
+                    } catch (Exception e) {
+                        //  progressBar.dismiss()\;
+                        e.printStackTrace();
+                        ll.setVisibility(View.GONE);
+                        Toast.makeText(getActivity(), getString(R.string.mp3_error), Toast.LENGTH_SHORT).show();
+                    }
 
-                       } else if (type.equals("Video")) {
-                           Log.d(TAG, "onPassPlayLink: " + url);
-                           Intent intent = new Intent(getActivity(), VideoActivity.class);
-                           intent.putExtra(URL, url);
-                           intent.putExtra(TITLE, title);
-                           startActivity(intent);
-                       }
-                   }
-               });
 
+                } else if (type.equals("Video")) {
+                    Log.d(TAG, "onPassPlayLink: " + url);
+                    Intent intent = new Intent(getActivity(), VideoActivity.class);
+                    intent.putExtra(URL, "http://channelz2.static.vcdn.vn/zv/eb0ad745faefcaec151aa62e837869cd/57883590/2016/07/08/0/4/04985412f27887a335d8e35c34b70876.mp4");
+                    intent.putExtra(TITLE, title);
+                    startActivity(intent);
+                }
             }
+        });
+
+    }
 
 
     private Runnable UpdateSongTime = new Runnable() {
@@ -336,13 +368,14 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     public void onPassDownloadLink(String fileName, String type, String url, String title) {
         new Downloader().execute(url, title, fileName);
     }
+
     private ProgressDialog progressBar;
 
-    public void showDiaglog(Context context){
+    public void showDiaglog(Context context) {
         progressBar = new ProgressDialog(context);
         progressBar.setCancelable(true);
         progressBar.setMessage("Vui long doi...");
-        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER );
+        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressBar.show();
     }
 
@@ -528,7 +561,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(player != null) {
+        if (player != null) {
             player.stop();
             player.release();
             player = null;

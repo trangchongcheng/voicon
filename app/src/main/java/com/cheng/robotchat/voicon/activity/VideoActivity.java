@@ -2,31 +2,40 @@ package com.cheng.robotchat.voicon.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.cheng.robotchat.voicon.BaseActivity;
 import com.cheng.robotchat.voicon.fragment.ChatFragment;
 import com.cheng.robotchat.voicon.R;
+import com.cheng.robotchat.voicon.ultils.CustomVideoView;
 
 
 /**
  * Created by Welcome on 4/18/2016.
  */
-public class VideoActivity extends BaseActivity {
-    private VideoView videoView;
+public class VideoActivity extends AppCompatActivity {
+    private final String TAG= getClass().getSimpleName();
+    private CustomVideoView videoView;
     private int position = 0;
     private MediaController mediaController;
     private Intent intent;
@@ -41,14 +50,24 @@ public class VideoActivity extends BaseActivity {
             "</style>";
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView();
+        init();
+        setValue(savedInstanceState);
+        setEvent();
+    }
+
     public void setContentView() {
         setContentView(R.layout.activity_video);
     }
 
-    @Override
     public void init() {
-
-        videoView = (VideoView) findViewById(R.id.videoView);
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        videoView = (CustomVideoView) findViewById(R.id.videoView);
         tvTitle = (TextView) findViewById(R.id.activity_tvTitle);
         activity_progressBar = (ProgressBar) findViewById(R.id.activity_progressBar);
         intent = getIntent();
@@ -63,12 +82,10 @@ public class VideoActivity extends BaseActivity {
         onReturnContent(intent.getStringExtra(ChatFragment.TITLE),intent.getStringExtra(ChatFragment.URL));
     }
 
-    @Override
     public void setValue(Bundle savedInstanceState) {
 
     }
 
-    @Override
     public void setEvent() {
 
     }
@@ -77,14 +94,16 @@ public class VideoActivity extends BaseActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt(currentPosition, videoView.getCurrentPosition());
-        videoView.pause();
+       // videoView.pause();
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         position = savedInstanceState.getInt(currentPosition);
+        Log.d(TAG, "onRestoreInstanceState: ");
         videoView.seekTo(position);
+        videoView.start();
     }
 
 
@@ -92,14 +111,13 @@ public class VideoActivity extends BaseActivity {
     public void onReturnContent(String content, String videoUrl) {
         activity_progressBar.setVisibility(View.VISIBLE);
         tvTitle.setText(title);
-        webview.loadData(styleCss+content,"text/html; charset=UTF-8", null);
-        if (mediaController == null) {
-            mediaController = new MediaController(VideoActivity.this);
-            mediaController.setAnchorView(videoView);
-            videoView.setMediaController(mediaController);
-        }
         try {
-            videoView.setVideoURI(Uri.parse(videoUrl.replace(" ","%20")));
+            videoView.setVideoURI(Uri.parse(videoUrl));
+            webview.loadData(styleCss+content,"text/html; charset=UTF-8", null);
+            if (mediaController == null) {
+                mediaController = new MediaController(VideoActivity.this);
+                videoView.setMediaController(mediaController);
+            }
 
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
@@ -123,15 +141,37 @@ public class VideoActivity extends BaseActivity {
         });
         activity_progressBar.setVisibility(View.GONE);
     }
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//
+//            getWindow().addFlags(
+//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//           getWindow().clearFlags(
+//                    WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+//
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//
+//            getWindow().addFlags(
+//                    WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+//            getWindow().clearFlags(
+//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//
+//        }
+//    }
+
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: ");
 
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
 
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
     }
 }

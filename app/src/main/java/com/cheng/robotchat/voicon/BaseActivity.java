@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,14 +25,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Connecti
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView();
         connectivityChangeReceiver = new ConnectivityChangeReceiver(this);
         filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        setContentView();
         init();
         setValue(savedInstanceState);
         setEvent();
-        Log.d(TAG, "onCreate: hihi");
+        Log.d(TAG, "onCreate: BaseActivity");
     }
     public abstract void setContentView();
     public abstract void init();
@@ -41,21 +42,21 @@ public abstract class BaseActivity extends AppCompatActivity implements Connecti
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop: ");
+        Log.d(TAG, "onStop: BaseActivity");
         
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
+        Log.d(TAG, "onDestroy: BaseActivity");
         unregisterReceiver(connectivityChangeReceiver);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: ");
+        Log.d(TAG, "onPause: BaseActivity");
         times = 0;
         super.onResume();
 
@@ -64,19 +65,17 @@ public abstract class BaseActivity extends AppCompatActivity implements Connecti
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ");
-        Log.d(TAG, "onResumeBaseMainActivity: ");
+        Log.d(TAG, "onResume:  BaseActivity");
         if (times < 1) {
             registerReceiver(connectivityChangeReceiver, filter);
             ++times;
-            Log.d(TAG, "times: " + times);
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: ");
+        Log.d(TAG, "onStart: BaseActivity");
     }
     @Override
     public void onConnectivityChanged(boolean isConnected) {
@@ -106,5 +105,31 @@ public abstract class BaseActivity extends AppCompatActivity implements Connecti
         });
         AlertDialog diag = builder.create();
         diag.show();
+    }
+    public void replaceFragment(Fragment fragment){
+        String FRAGMENT_TAG = fragment.getClass().getSimpleName();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.activity_maincreen_frame, fragment, FRAGMENT_TAG)
+                .addToBackStack(FRAGMENT_TAG)
+                //.commitAllowingStateLoss();
+                .commit();
+    }
+    public void switchFragmentWithoutAddToBackstack(Fragment fragment) {
+        String FRAGMENT_TAG = fragment.getClass().getSimpleName();
+        this.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.fragment_container, fragment, FRAGMENT_TAG)
+                .commitAllowingStateLoss();
+    }
+    public boolean popFragment() {
+        Log.d("Tag", "popFragment: "+getSupportFragmentManager().getBackStackEntryCount());
+        boolean isPop = false;
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+            isPop = true;
+            getSupportFragmentManager().popBackStack();
+        }
+        return isPop;
     }
 }

@@ -4,12 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <VideoView
+    <com.cheng.robotchat.voicon.ultils.CustomVideoView
         android:visibility="gone"
         android:id="@+id/videoView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center" />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:layout_margin="8dp"

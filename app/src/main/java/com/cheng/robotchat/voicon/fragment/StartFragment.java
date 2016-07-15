@@ -19,11 +19,13 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.cheng.robotchat.voicon.BaseFragment;
 import com.cheng.robotchat.voicon.model.User;
 import com.cheng.robotchat.voicon.provider.UserDataHelper;
 import com.cheng.robotchat.voicon.ultils.CoverBitmapToByte;
 import com.cheng.robotchat.voicon.ultils.UserPreference;
 import com.cheng.robotchat.voicon.R;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -35,7 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by chientruong on 6/7/16.
  */
-public class StartFragment extends Fragment {
+public class StartFragment extends BaseFragment {
     private final String TAG = getClass().getSimpleName();
     private UserDataHelper userDataHelper;
     private UserPreference userPreference;
@@ -44,7 +46,7 @@ public class StartFragment extends Fragment {
     CircleImageView imgName;
 
     @OnClick(R.id.imgAvatar)
-    public void changeAvatar(){
+    public void changeAvatar() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, SELECT_PHOTO);
@@ -61,32 +63,27 @@ public class StartFragment extends Fragment {
 
     @BindView(R.id.btnLogin)
     Button btnLogin;
+
     @OnClick(R.id.btnLogin)
-    public void onClickLogin(){
+    public void onClickLogin() {
         String nameFrom = edtName.getText().toString().trim();
-        if(nameFrom.length()>3){
+        if (nameFrom.length() > 3) {
             String nameTo = null;
             String language = "vn";
             byte[] imageFrom = CoverBitmapToByte.getBytes(CoverBitmapToByte.coverImageViewToBimap(imgName));
             byte[] imageTo = CoverBitmapToByte.getBytes(BitmapFactory.decodeResource(getResources(), R.drawable.ic_app));
-            if(rbtnTiengViet.isChecked()){
-                language="vn";
-                nameTo="Voi Con";
-            }else if(rbtnEnglish.isChecked()){
-                language="en";
-                nameTo="Elephant Chat";
+            if (rbtnTiengViet.isChecked()) {
+                language = "vn";
+                nameTo = "Voi Con";
+            } else if (rbtnEnglish.isChecked()) {
+                language = "en";
+                nameTo = "Elephant Chat";
             }
             userDataHelper.deleteAll();
-            userDataHelper.addUser(new User(nameFrom,nameTo,language,imageFrom,imageTo));
+            userDataHelper.addUser(new User(nameFrom, nameTo, language, imageFrom, imageTo));
             UserPreference.getInstance(getActivity()).setLoginTrue();
-            //  getChildFragmentManager().beginTransaction().remove(this).commit();
-         //  FragmentTransaction transaction = this.getParentFragment().getChildFragmentManager().beginTransaction();
-           FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            transaction.addToBackStack(null);
-            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
-            transaction.replace(R.id.activity_maincreen_frame, new FragmentContainer());
-            transaction.commit();
-        }else {
+            mMainActivity.replaceFragment(new ChatFragment());
+        } else {
             Toast.makeText(getActivity(), "Vui long nhap ten tu 4 ky tu tro len vao!", Toast.LENGTH_SHORT).show();
         }
 
@@ -96,16 +93,18 @@ public class StartFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_start,container,false);
+        View view = inflater.inflate(R.layout.fragment_start, container, false);
         userDataHelper = new UserDataHelper(getActivity());
         ButterKnife.bind(this, view);
         return view;
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.setting).setVisible(false);
@@ -129,9 +128,9 @@ public class StartFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
+        switch (requestCode) {
             case SELECT_PHOTO:
-                if(resultCode == getActivity().RESULT_OK){
+                if (resultCode == getActivity().RESULT_OK) {
                     Uri selectedImage = data.getData();
                     InputStream imageStream = null;
                     try {

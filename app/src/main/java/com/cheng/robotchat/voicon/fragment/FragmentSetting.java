@@ -1,5 +1,6 @@
 package com.cheng.robotchat.voicon.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,6 +22,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cheng.robotchat.voicon.activity.MainCreenActivity;
 import com.cheng.robotchat.voicon.model.User;
 import com.cheng.robotchat.voicon.provider.UserDataHelper;
 import com.cheng.robotchat.voicon.ultils.CoverBitmapToByte;
@@ -127,7 +129,10 @@ public class FragmentSetting extends Fragment {
         }
     }
 
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

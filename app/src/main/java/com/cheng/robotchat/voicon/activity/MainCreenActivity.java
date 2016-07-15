@@ -7,19 +7,21 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.cheng.robotchat.voicon.BaseActivity;
-import com.cheng.robotchat.voicon.fragment.FragmentContainer;
+import com.cheng.robotchat.voicon.fragment.ChatFragment;
 import com.cheng.robotchat.voicon.fragment.FragmentSetting;
 import com.cheng.robotchat.voicon.fragment.StartFragment;
 import com.cheng.robotchat.voicon.ultils.UserPreference;
@@ -43,7 +45,7 @@ import butterknife.ButterKnife;
 /**
  * Created by chientruong on 5/30/16.
  */
-public class MainCreenActivity extends BaseActivity implements FragmentSetting.FinishFragment {
+public class MainCreenActivity extends AppCompatActivity implements FragmentSetting.FinishFragment {
     public final String TAG = getClass().getSimpleName();
     private Bundle save = null;
     private ShareDialog shareDialog;
@@ -54,13 +56,20 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
     private ViewDialog alert;
     private static int RESULT_LOAD_IMAGE = 1;
 
-    @Override
     public void setContentView() {
         setContentView(R.layout.activity_maincreen);
         rootView = getWindow().getDecorView().findViewById(android.R.id.content);
     }
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView();
+        init();
+        setValue(savedInstanceState);
+        setEvent();
+    }
+
     public void init() {
         ButterKnife.bind(this);
         //toolbar.setTitle(R.string.app_name);
@@ -70,17 +79,8 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
         FacebookSdk.sdkInitialize(getApplicationContext());
         shareDialog = new ShareDialog(this);
         alert = new ViewDialog();
-        //AppEventsLogger.activateApp(this);
-        if(!UserPreference.getInstance(this).getIsLogin()) {
-            fragmentContainer = new StartFragment();
-
-        }else {
-            fragmentContainer = new FragmentContainer();
-        }
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.activity_maincreen_frame, fragmentContainer, fragmentContainer.getTag());
-        transaction.commit();
     }
+
     public static Bitmap getScreenShot(View view) {
         View screenView = view.getRootView();
         screenView.setDrawingCacheEnabled(true);
@@ -88,12 +88,13 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
         screenView.setDrawingCacheEnabled(false);
         return bitmap;
     }
-    public void store(Bitmap bm){
+
+    public void store(Bitmap bm) {
         final String dirPath = Environment.getExternalStorageDirectory().getPath() + "/Sceenshots";
         File dir = new File(dirPath);
-        if(!dir.exists())
+        if (!dir.exists())
             dir.mkdirs();
-        File file = new File(dirPath, "Chat"+getTime()+".PNG");
+        File file = new File(dirPath, "Chat" + getTime() + ".PNG");
         try {
             FileOutputStream fOut = new FileOutputStream(file);
             bm.compress(Bitmap.CompressFormat.PNG, 85, fOut);
@@ -103,12 +104,17 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
             e.printStackTrace();
         }
     }
+
+
+
+
     public String getTime() {
         DateFormat df = new SimpleDateFormat("h:mm:a");
         String date = df.format(Calendar.getInstance().getTime());
         return date;
     }
-    public void sharePhotoToFacebook(Bitmap imagePath){
+
+    public void sharePhotoToFacebook(Bitmap imagePath) {
         SharePhoto photo = new SharePhoto.Builder()
                 .setBitmap(imagePath)
                 .setCaption("Testing")
@@ -117,17 +123,23 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
                 .addPhoto(photo)
                 .build();
 
-        ShareApi.share(content,null);
+        ShareApi.share(content, null);
 
     }
 
 
-    @Override
     public void setValue(Bundle saveInstance) {
         save = saveInstance;
+        if (!UserPreference.getInstance(this).getIsLogin() && saveInstance == null) {
+            fragmentContainer = new StartFragment();
+            switchFragmentWithoutAddToBackstack(fragmentContainer);
+        } else {
+            fragmentContainer = new ChatFragment();
+            replaceFragment(fragmentContainer);
+
+        }
     }
 
-    @Override
     public void setEvent() {
 
     }
@@ -140,10 +152,6 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
-//        if(!UserPreference.getInstance(this).getIsLogin()){
-//            menu.findItem(R.id.setting).setVisible(false);
-//            menu.findItem(R.id.photo).setVisible(false);
-//        }
         return true;
     }
 
@@ -151,17 +159,12 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.setting) {
-            Fragment fragment = new FragmentSetting();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
-            transaction.add(R.id.activity_maincreen_frame, fragment, fragment.getTag());
-            transaction.addToBackStack(null).commit();
+            replaceFragment(new FragmentSetting());
             return true;
         }
         if (id == R.id.photo) {
             Bitmap bm = getScreenShot(rootView);
             store(bm);
-           // alert.showDialog(this,bm);
             Toast.makeText(MainCreenActivity.this, getString(R.string.chup_man_hinh), Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -171,7 +174,7 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
     public boolean popFragment() {
         boolean isPop = false;
 
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
             isPop = true;
             getSupportFragmentManager().popBackStack();
         }
@@ -224,10 +227,9 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
     }
 
 
-
     public class ViewDialog {
 
-        public void showDialog(final Activity activity, final Bitmap bm){
+        public void showDialog(final Activity activity, final Bitmap bm) {
             final Dialog dialog = new Dialog(activity);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.dialog);
@@ -237,7 +239,7 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
             btnShare.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   // sharePhotoToFacebook(bm);
+                    // sharePhotoToFacebook(bm);
 //                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 //                    Log.d(TAG, "onClick: "+Environment.getExternalStorageDirectory() + "/VoiConApp");
 //                    Uri uri = Uri.parse(Environment.getExternalStorageDirectory() + "/VoiConApp");
@@ -253,5 +255,23 @@ public class MainCreenActivity extends BaseActivity implements FragmentSetting.F
 
         }
     }
-
+    public void replaceFragment(Fragment fragment){
+        String FRAGMENT_TAG = fragment.getClass().getSimpleName();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.activity_maincreen_frame, fragment, FRAGMENT_TAG)
+                .addToBackStack(FRAGMENT_TAG)
+                //.commitAllowingStateLoss();
+                .commit();
+    }
+    public void switchFragmentWithoutAddToBackstack(Fragment fragment) {
+        String FRAGMENT_TAG = fragment.getClass().getSimpleName();
+        this.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.activity_maincreen_frame, fragment, FRAGMENT_TAG)
+                .commitAllowingStateLoss();
+    }
 }
+
+
