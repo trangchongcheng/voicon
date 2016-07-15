@@ -69,6 +69,23 @@ public class User {
         this.mImageTo = mImageTo;
     }
 
+    public User(int id,String mNameFrom, String mLanguage, byte[] mImageFrom) {
+        this.mNameTo = mNameTo;
+        this.mLanguage = mLanguage;
+        this.mNameFrom = mNameFrom;
+        this.mImageFrom = mImageFrom;
+        this.mImageTo = mImageTo;
+    }
+
+    public User(int id,String mNameFrom, String mLanguage, byte[] mImageFrom,String mNameTo) {
+        this.id=id;
+        this.mNameTo = mNameTo;
+        this.mLanguage = mLanguage;
+        this.mNameFrom = mNameFrom;
+        this.mImageFrom = mImageFrom;
+    }
+
+
     public User() {
     }
 

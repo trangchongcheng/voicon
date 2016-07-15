@@ -97,7 +97,6 @@ public class MessagesListAdapter extends BaseAdapter implements SupperMessagesLi
             if(m.getImageTo()!=null){
                 Bitmap bitmap = BitmapFactory.decodeByteArray(m.getImageTo() , 0, m.getImageTo() .length);
                 circleImageView.setImageBitmap(bitmap);
-               // circleImageView.setImageBitmap(bitmap);
             }
             if (m.getLinks().size() > 0) {
                 //  lp.height = 1200;

@@ -45,7 +45,7 @@ import butterknife.ButterKnife;
 /**
  * Created by chientruong on 5/30/16.
  */
-public class MainCreenActivity extends AppCompatActivity implements FragmentSetting.FinishFragment {
+public class MainCreenActivity extends AppCompatActivity implements FragmentSetting.OnUpdatelListener {
     public final String TAG = getClass().getSimpleName();
     private Bundle save = null;
     private ShareDialog shareDialog;
@@ -159,7 +159,7 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.setting) {
-            replaceFragment(new FragmentSetting());
+            addToFragment(new FragmentSetting());
             return true;
         }
         if (id == R.id.photo) {
@@ -218,12 +218,8 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
     }
 
     @Override
-    public void onFinish() {
-        getSupportFragmentManager().popBackStack();
-        Toast.makeText(MainCreenActivity.this, "!", Toast.LENGTH_SHORT).show();
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
+    public void onUpdatelListener(boolean isUpdate) {
+//        if(isUpdate)
     }
 
 
@@ -262,9 +258,19 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
                 .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 .replace(R.id.activity_maincreen_frame, fragment, FRAGMENT_TAG)
                 .addToBackStack(FRAGMENT_TAG)
-                //.commitAllowingStateLoss();
-                .commit();
+                .commitAllowingStateLoss();
     }
+
+    public void addToFragment(Fragment fragment){
+        String FRAGMENT_TAG = fragment.getClass().getSimpleName();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .add(R.id.activity_maincreen_frame, fragment, FRAGMENT_TAG)
+                .addToBackStack(FRAGMENT_TAG)
+                .commitAllowingStateLoss();
+    }
+
     public void switchFragmentWithoutAddToBackstack(Fragment fragment) {
         String FRAGMENT_TAG = fragment.getClass().getSimpleName();
         this.getSupportFragmentManager().beginTransaction()

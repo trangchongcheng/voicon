@@ -188,6 +188,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         userDataHelper = new UserDataHelper(getActivity());
+        Log.d(TAG, "onCreateView: hihihi");
         arrUser = userDataHelper.getAllArticle();
         ButterKnife.bind(this, view);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -260,6 +261,8 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
 
     @Override
     public void onReturnObjectFinish(JSONObject object) throws JSONException {
+        enableDisableView(llChat,true);
+        tvWaiting.setVisibility(View.GONE);
         if (object == null) {
             listMessages.add(new Message(arrUser.get(0).getmImageFrom(), arrUser.get(0).getmNameFrom(), getTime(), "Lỗi kết nối mạng vui lòng thử lại (@_@)", true));
             adapter.notifyDataSetChanged();
@@ -287,8 +290,6 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
                 listMessages.add(new Message(arrUser.get(0).getmImageTo(), arrUser.get(0).getmNameTo(), getTime(), value, isDownload, type, link, false));
                 adapter.notifyDataSetChanged();
                 playBeep();
-                tvWaiting.setVisibility(View.GONE);
-                enableDisableView(llChat,true);
               //  llChat.setEnabled(true);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -342,7 +343,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
                 } else if (type.equals("Video")) {
                     Log.d(TAG, "onPassPlayLink: " + url);
                     Intent intent = new Intent(getActivity(), VideoActivity.class);
-                    intent.putExtra(URL, "http://channelz2.static.vcdn.vn/zv/eb0ad745faefcaec151aa62e837869cd/57883590/2016/07/08/0/4/04985412f27887a335d8e35c34b70876.mp4");
+                    intent.putExtra(URL, url);
                     intent.putExtra(TITLE, title);
                     startActivity(intent);
                 }

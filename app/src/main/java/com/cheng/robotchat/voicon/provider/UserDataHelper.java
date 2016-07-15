@@ -8,9 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.cheng.robotchat.voicon.R;
 import com.cheng.robotchat.voicon.model.User;
 
 import java.util.ArrayList;
+
+import static android.widget.Toast.makeText;
 
 /**
  * Created by chientruong on 6/7/16.
@@ -75,21 +78,22 @@ public class UserDataHelper extends SQLiteOpenHelper {
         // Inserting Row
         db.insert(TABLE_USER, null, values);
         db.close(); // Closing database connection
-        Toast.makeText(context, "Đã lưu thành công", Toast.LENGTH_SHORT).show();
+        makeText(context, "Đã lưu thành công", Toast.LENGTH_SHORT).show();
     }
 
     public User getUserById(int id) {
+        User user = null;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_USER, new String[]{KEY_ID,
                         KEY_NAME_FROM}, KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
-        User user = new User(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3),
-                cursor.getBlob(4),cursor.getBlob(5));
-        cursor.close();
-        db.close();
-
+            user = new User(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                    cursor.getBlob(4), cursor.getBlob(5));
+            cursor.close();
+            db.close();
+        }
         return user;
     }
 
@@ -150,6 +154,19 @@ public class UserDataHelper extends SQLiteOpenHelper {
         values.put(KEY_IMAGE_TO, user.getmImageTo());
         values.put(KEY_IMAGE_FROM, user.getmImageFrom());
 
+        // updating row
+        return db.update(TABLE_USER, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(user.getId()) });
+    }
+
+    public int UpdateFrom(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME_TO, user.getmNameTo());
+        values.put(KEY_NAME_FROM, user.getmNameFrom());
+        values.put(KEY_LANGUAGE, user.getmLanguage());
+        values.put(KEY_IMAGE_FROM, user.getmImageFrom());
+        Toast.makeText(context, context.getString(R.string.thay_doi), Toast.LENGTH_SHORT).show();
         // updating row
         return db.update(TABLE_USER, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(user.getId()) });
