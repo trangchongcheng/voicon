@@ -1,8 +1,6 @@
 package com.cheng.robotchat.voicon.activity;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -11,23 +9,20 @@ import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.VideoView;
 
-import com.cheng.robotchat.voicon.BaseActivity;
-import com.cheng.robotchat.voicon.fragment.ChatFragment;
+import com.cheng.robotchat.voicon.AnalyticsApplication;
 import com.cheng.robotchat.voicon.R;
+import com.cheng.robotchat.voicon.fragment.ChatFragment;
 import com.cheng.robotchat.voicon.ultils.CustomVideoView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 
 /**
@@ -44,6 +39,7 @@ public class VideoActivity extends AppCompatActivity {
     private ProgressBar activity_progressBar;
     private String currentPosition ="currentPosition";
     private WebView webview;
+    private Tracker mTracker;
     private final String  styleCss="<style>img{max-width: 100%; width:auto; height: auto;}\" +\n"+
             "                       a{color:#374046; text-decoration:none}"+
             "                    h3{font-size: 25px;color:#374046;}"+
@@ -52,12 +48,21 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
         setContentView();
         init();
         setValue(savedInstanceState);
         setEvent();
+
     }
 
+    public void sendScreenImageName(String tag) {
+        // [START screen_view_hit]
+        mTracker.setScreenName(getString(R.string.app_name) + "-" + tag + "-" + android.os.Build.MODEL);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        // [END screen_view_hit]
+    }
     public void setContentView() {
         setContentView(R.layout.activity_video);
     }
@@ -111,6 +116,7 @@ public class VideoActivity extends AppCompatActivity {
     public void onReturnContent(String content, String videoUrl) {
         activity_progressBar.setVisibility(View.VISIBLE);
         tvTitle.setText(title);
+        sendScreenImageName(TAG+"-"+content);
         try {
             videoView.setVideoURI(Uri.parse(videoUrl));
             webview.loadData(styleCss+content,"text/html; charset=UTF-8", null);

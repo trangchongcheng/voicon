@@ -7,8 +7,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
@@ -35,11 +33,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cheng.robotchat.voicon.activity.MainCreenActivity;
+import com.cheng.robotchat.voicon.R;
 import com.cheng.robotchat.voicon.activity.MessagesListAdapter;
 import com.cheng.robotchat.voicon.activity.VideoActivity;
 import com.cheng.robotchat.voicon.interfaces.OnReturnObject;
@@ -49,8 +46,10 @@ import com.cheng.robotchat.voicon.model.User;
 import com.cheng.robotchat.voicon.provider.UserDataHelper;
 import com.cheng.robotchat.voicon.services.ApiService;
 import com.cheng.robotchat.voicon.services.GetJSONObject;
+import com.cheng.robotchat.voicon.ultils.NotificationHelper;
 import com.cheng.robotchat.voicon.ultils.Session;
-import com.cheng.robotchat.voicon.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
@@ -96,13 +95,14 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     public static int oneTimeOnly = 0;
     private double positionPause = 0;
     int id = 1;
-
+    private AdRequest adRequest;
     @BindView(R.id.fragment_chat_imgSend)
     ImageView imgSend;
     @BindView(R.id.fragment_chat_imgClose)
     ImageView imgClose;
     @BindView(R.id.tvWaiting)
     ShimmerTextView tvWaiting;
+
     @OnClick(R.id.fragment_chat_imgClose)
     void onClose() {
         if (player != null) {
@@ -113,14 +113,13 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
         ll.setVisibility(View.GONE);
     }
 
-    //    @BindView(R.id.fragment_chat_seekBar)
-//    SeekBar seekBar;
     @BindView(R.id.tvDuration)
     TextView tvDuration;
 
     @BindView(R.id.tvNameSong)
     TextView tvNameSong;
-
+    @BindView(R.id.adView)
+    AdView adView;
     @BindView(R.id.llMedia)
     RelativeLayout ll;
     @BindView(R.id.fragment_chat_imgPlay)
@@ -128,7 +127,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     @BindView(R.id.llChat)
     LinearLayout llChat;
     boolean isPause = false;
-
+    private int isClick = 0;
     @OnClick(R.id.fragment_chat_imgPlay)
     void onPlay() {
         if (player.isPlaying()) {
@@ -145,6 +144,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
 
     @OnClick(R.id.fragment_chat_imgSend)
     void onClick() {
+        showAds();
         rlStart.setVisibility(View.GONE);
         time = DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()) + "<br>";
         String data = edtMessages.getText().toString().trim().replace(" ", "%20");
@@ -158,7 +158,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
             edtMessages.setText("");
             tvWaiting.setVisibility(View.VISIBLE);
             //llChat.setEnabled(false);
-            enableDisableView(llChat,false);
+            enableDisableView(llChat, false);
         } else {
             Toast.makeText(getActivity(), getString(R.string.nhap), Toast.LENGTH_SHORT).show();
         }
@@ -191,6 +191,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
         Log.d(TAG, "onCreateView: hihihi");
         arrUser = userDataHelper.getAllArticle();
         ButterKnife.bind(this, view);
+        adRequest = new AdRequest.Builder().build();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -217,14 +218,24 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
 
 
     }
+    public void showAds(){
+        isClick++;
+        if(isClick==5 || isClick==10||isClick==15||isClick==20||isClick==25||isClick==30||isClick==35||isClick==40){
+            adView.loadAd(adRequest);
+            adView.setVisibility(View.VISIBLE);
+            Log.d(TAG, "showAds: "+isClick);
+        }else {
+            adView.setVisibility(View.GONE);
+        }
+    }
 
     private void enableDisableView(View view, boolean enabled) {
         view.setEnabled(enabled);
 
-        if ( view instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup)view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
 
-            for ( int idx = 0 ; idx < group.getChildCount() ; idx++ ) {
+            for (int idx = 0; idx < group.getChildCount(); idx++) {
                 enableDisableView(group.getChildAt(idx), enabled);
             }
         }
@@ -261,7 +272,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
 
     @Override
     public void onReturnObjectFinish(JSONObject object) throws JSONException {
-        enableDisableView(llChat,true);
+        enableDisableView(llChat, true);
         tvWaiting.setVisibility(View.GONE);
         if (object == null) {
             listMessages.add(new Message(arrUser.get(0).getmImageFrom(), arrUser.get(0).getmNameFrom(), getTime(), "Lỗi kết nối mạng vui lòng thử lại (@_@)", true));
@@ -290,7 +301,7 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
                 listMessages.add(new Message(arrUser.get(0).getmImageTo(), arrUser.get(0).getmNameTo(), getTime(), value, isDownload, type, link, false));
                 adapter.notifyDataSetChanged();
                 playBeep();
-              //  llChat.setEnabled(true);
+                //  llChat.setEnabled(true);
             } catch (JSONException e) {
                 e.printStackTrace();
                 listMessages.add(new Message(arrUser.get(0).getmImageFrom(), arrUser.get(0).getmNameFrom(), getTime(), "Nội dung bạn nhập không hợp lệ", true));
@@ -384,12 +395,14 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
     private class Downloader extends AsyncTask<String, Integer, Void> {
         private NotificationManager mNotifyManager;
         private Builder mBuilder;
+        private NotificationHelper mNotificationHelper;
 
         @Override
         protected void onPreExecute() {
             mNotifyManager = (NotificationManager) getActivity().getSystemService(getContext().NOTIFICATION_SERVICE);
+            mNotifyManager.cancelAll();
             mBuilder = new Builder(getContext());
-
+            mBuilder.setAutoCancel(true);
             super.onPreExecute();
         }
 
@@ -417,42 +430,6 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
                     con.connect();
                     is = con.getInputStream();
 
-                    //                   int responseCode = con.getResponseCode();
-//                    if (responseCode == HttpURLConnection.HTTP_OK) {
-//                        String disposition = con.getHeaderField("Content-Disposition");
-//                        String contentType = con.getContentType();
-//                        Log.d(TAG, "doInBackground: "+contentType);
-//                       // int contentLength = con.getContentLength();
-//                        if (contentType.equals("video/mp4")) {
-//
-//                           fileName=params[1]+".mp4";
-//                        }else if(contentType.equals("audio/mpeg")){
-//                            fileName=params[1]+".mp3";
-//                        }
-//                        else {
-//                           // Toast.makeText(getActivity(), "Khong the tai file nay", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                    Map<String, List<String>> headerFields = con.getHeaderFields();
-//
-//                    Set<String> headerFieldsSet = headerFields.keySet();
-//                    Iterator<String> hearerFieldsIter = headerFieldsSet.iterator();
-//
-//                    while (hearerFieldsIter.hasNext()) {
-//
-//                        String headerFieldKey = hearerFieldsIter.next();
-//                        List<String> headerFieldValue = headerFields.get(headerFieldKey);
-//
-//                        StringBuilder sb = new StringBuilder();
-//                        for (String value : headerFieldValue) {
-//                            sb.append(value);
-//                            sb.append("");
-//                        }
-//
-//                        Log.d(TAG, headerFieldKey + "=" + sb.toString());
-//
-//                    }toString
-
                     pathl = sdCard + fileName;
 
                     Log.d(TAG, "doInBackground1: " + fileName);
@@ -462,14 +439,16 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
                     long total = 0;
                     fos = new FileOutputStream(new File(pathl));
                     byte[] buffer = new byte[1024];
-                    int count, latestPercentDone;
+                    long latestPercentDone;
+                    int count;
                     int percentDone = -1;
                     while ((count = is.read(buffer)) != -1) {
                         total += count;
-                        latestPercentDone = ((int) (total * 100) / lenghtOfFile);
-                        // publishProgress((int) (total * 100) / lenghtOfFile);
+                        latestPercentDone = ((total * 100) / lenghtOfFile);
+                        Log.d(TAG, "onProgressUpdateCheng: " + latestPercentDone);
                         if (percentDone != latestPercentDone) {
-                            percentDone = latestPercentDone;
+                            percentDone = (int)latestPercentDone;
+                            Thread.sleep(1000);
                             publishProgress(percentDone);
                         }
                         fos.write(buffer, 0, count);

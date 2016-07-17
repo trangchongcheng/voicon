@@ -9,28 +9,30 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.cheng.robotchat.voicon.AnalyticsApplication;
+import com.cheng.robotchat.voicon.R;
 import com.cheng.robotchat.voicon.fragment.ChatFragment;
 import com.cheng.robotchat.voicon.fragment.FragmentSetting;
 import com.cheng.robotchat.voicon.fragment.StartFragment;
 import com.cheng.robotchat.voicon.ultils.UserPreference;
-import com.cheng.robotchat.voicon.R;
 import com.facebook.FacebookSdk;
 import com.facebook.share.ShareApi;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.robohorse.gpversionchecker.GPVersionChecker;
 
 import java.io.File;
@@ -55,7 +57,7 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
     Toolbar toolbar;
     private ViewDialog alert;
     private static int RESULT_LOAD_IMAGE = 1;
-
+    private Tracker mTracker;
     public void setContentView() {
         setContentView(R.layout.activity_maincreen);
         rootView = getWindow().getDecorView().findViewById(android.R.id.content);
@@ -64,10 +66,13 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MobileAds.initialize(this, "ca-app-pub-6191127124097080~9774922059");
         setContentView();
         init();
         setValue(savedInstanceState);
         setEvent();
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     public void init() {
@@ -106,6 +111,13 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
     }
 
 
+
+    public void sendScreenImageName(String tag) {
+        // [START screen_view_hit]
+        mTracker.setScreenName(getString(R.string.app_name) + "-" + tag + "-" + android.os.Build.MODEL);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        // [END screen_view_hit]
+    }
 
 
     public String getTime() {
@@ -214,7 +226,7 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
-
+        sendScreenImageName(TAG);
     }
 
     @Override

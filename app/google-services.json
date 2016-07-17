@@ -1,0 +1,45 @@
+{
+  "project_info": {
+    "project_number": "195928220883",
+    "firebase_url": "https://fir-convoi.firebaseio.com",
+    "project_id": "firebase-convoi",
+    "storage_bucket": "firebase-convoi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195928220883:android:c9a83575f4b36fd0",
+        "android_client_info": {
+          "package_name": "com.cheng.robotchat.voicon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195928220883-6p76cr4chstv48vnjf2uahn1kbui7rn8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-GyIXJR99miWqbgwcw0XsV8hkmvQEdQQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-80287412-2"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -57,8 +57,8 @@ public class ApiService {
 
             httpURLConnection.setRequestProperty("Accept","application/json;charset=utf-8");
 
-            httpURLConnection.setReadTimeout(10000); //60s
-            httpURLConnection.setConnectTimeout(10000); //30s
+            httpURLConnection.setReadTimeout(30000); //60s
+            httpURLConnection.setConnectTimeout(30000); //30s
 
             httpURLConnection.setUseCaches(false);
             httpURLConnection.setDoInput(true);

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:background="#ffffff"
     android:orientation="vertical">
 
@@ -107,13 +108,16 @@
         android:textSize="15sp"
         android:textStyle="bold"
         android:layout_gravity="center"/>
-    <!--<TextView-->
-        <!--android:id="@+id/tvWaiting"-->
-        <!--android:visibility="gone"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:text="@string/tra_loi"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="4dp"
+        ads:adSize="BANNER"
+        android:visibility="gone"
+        ads:adUnitId="@string/banner_ad_unit_id"/>
     <LinearLayout
         android:id="@+id/llChat"
         android:layout_width="match_parent"
