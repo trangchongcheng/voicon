@@ -11,7 +11,8 @@
     <string name="tai_ve">Download</string>
     <string name="play">Play</string>
     <string name="title_dialog">Bạn muốn voi con làm gì?</string>
-
+    <string name="banner_ad_unit_id">ca-app-pub-6191127124097080/2251655259</string>
+    <string name="banner_video">ca-app-pub-6191127124097080/3728388454</string>
 
     <string name="gpvch_header">Ứng dụng có phiên bản !</string>
     <string name="gpvch_button_positive">Update phiên bản mới ngay nào!</string>
@@ -38,5 +39,7 @@
     <string name="kiem_tra_ket_noi">Vui lòng kiểm tra lại mạng Internet và thử lại</string>
     <string name="dong_y">Đồng ý</string>
     <string name="bat_mang">Bật mạng</string>
+    <string name="title_video">Tiêu đề</string>
+    <string name="warning">* P/S: Xoay màn hình để phóng to video</string>
 
 </resources>

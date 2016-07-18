@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:195928220883:android:c9a83575f4b36fd0",
+        "mobilesdk_app_id": "1:195928220883:android:660bb5cc33976866",
         "android_client_info": {
-          "package_name": "com.cheng.robotchat.voicon"
+          "package_name": "com.cheng.robotchat.voiconchat"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "195928220883-6i0rc800oggs4u1r9nn57mjj5u9su964.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cheng.robotchat.voiconchat",
+            "certificate_hash": "8EF71E148FF35018C42AF5226648164B0E947C58"
+          }
+        },
         {
           "client_id": "195928220883-6p76cr4chstv48vnjf2uahn1kbui7rn8.apps.googleusercontent.com",
           "client_type": 3
