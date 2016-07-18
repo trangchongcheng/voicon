@@ -15,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.cheng.robotchat.voicon.model.Message;
 import com.cheng.robotchat.voicon.model.SupperLink;
 import com.cheng.robotchat.voicon.ultils.Utils;
@@ -76,8 +77,13 @@ public class MessagesListAdapter extends BaseAdapter implements SupperMessagesLi
                 TextView tvMsg = (TextView) convertView.findViewById(R.id.txtMsg);
 
                 if(m.getImageFrom()!=null){
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(m.getImageFrom() , 0, m.getImageFrom() .length);
-                    circleImageView.setImageBitmap(bitmap);
+//                    Bitmap bitmap = BitmapFactory.decodeByteArray(m.getImageFrom() , 0, m.getImageFrom() .length);
+//                    circleImageView.setImageBitmap(bitmap);
+                    Glide.with(context)
+                            .load(m.getImageFrom())
+                            .asBitmap()
+                            .placeholder(R.drawable.ic_avatar)
+                            .into(circleImageView);
                 }
                 tvTime.setText(m.getTime());
                 tvFrom.setText(m.getFromName());
@@ -95,8 +101,13 @@ public class MessagesListAdapter extends BaseAdapter implements SupperMessagesLi
             tvTime.setText(m.getTime());
             tvFrom.setText(m.getFromName());
             if(m.getImageTo()!=null){
-                Bitmap bitmap = BitmapFactory.decodeByteArray(m.getImageTo() , 0, m.getImageTo() .length);
-                circleImageView.setImageBitmap(bitmap);
+                Glide.with(context)
+                        .load(m.getImageTo())
+                        .asBitmap()
+                        .placeholder(R.drawable.ic_avatar)
+                        .into(circleImageView);
+               // Bitmap bitmap = BitmapFactory.decodeByteArray(m.getImageTo() , 0, m.getImageTo() .length);
+               // circleImageView.setImageBitmap(bitmap);
             }
             if (m.getLinks().size() > 0) {
                 //  lp.height = 1200;

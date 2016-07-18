@@ -40,5 +40,5 @@
     <string name="bat_mang">Enabled network</string>
     <string name="banner_ad_unit_id">ca-app-pub-6191127124097080/2251655259</string>
     <string name="banner_video">ca-app-pub-6191127124097080/3728388454</string>
-
+    <string name="title_video">Title</string>
 </resources>

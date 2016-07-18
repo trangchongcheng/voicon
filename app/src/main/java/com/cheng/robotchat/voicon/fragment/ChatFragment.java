@@ -316,41 +316,44 @@ public class ChatFragment extends Fragment implements OnReturnObject, MessagesLi
             @Override
             public void run() {
                 if (type.equals("Mp3")) {
-                    Log.d(TAG, "onPassPlayLink: " + url);
-
-                    if (player != null) {
-                        player.stop();
-                        player.release();
-                        player = null;
-                    }
-                    // Log.d(TAG, "onPassPlayLink: " + player.isPlaying());
-                    player = new MediaPlayer();
-                    player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    try {
-                        player.setDataSource(url);
-                        player.prepare();
-                        player.start();
-
-                        ll.setVisibility(View.VISIBLE);
-                        ll.startAnimation(AnimationUtils.loadAnimation(getActivity(),
-                                R.anim.slid_down));
-                        finalTime = player.getDuration();
-                        startTime = player.getCurrentPosition();
-
-                        //seekBar.setProgress(0);
-                        // tvDuraion.setText(startTime+"%");
-                        tvNameSong.setText(title);
-                        myHandler.postDelayed(UpdateSongTime, 100);
-
-                        //progressBar.dismiss();
-                    } catch (Exception e) {
-                        //  progressBar.dismiss()\;
-                        e.printStackTrace();
-                        ll.setVisibility(View.GONE);
-                        Toast.makeText(getActivity(), getString(R.string.mp3_error), Toast.LENGTH_SHORT).show();
-                    }
-
-
+//                    Log.d(TAG, "onPassPlayLink: " + url);
+//
+//                    if (player != null) {
+//                        player.stop();
+//                        player.release();
+//                        player = null;
+//                    }
+//                    // Log.d(TAG, "onPassPlayLink: " + player.isPlaying());
+//                    player = new MediaPlayer();
+//                    player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//                    try {
+//                        player.setDataSource(url);
+//                        player.prepare();
+//                        player.start();
+//
+//                        ll.setVisibility(View.VISIBLE);
+//                        ll.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+//                                R.anim.slid_down));
+//                        finalTime = player.getDuration();
+//                        startTime = player.getCurrentPosition();
+//
+//                        //seekBar.setProgress(0);
+//                        // tvDuraion.setText(startTime+"%");
+//                        tvNameSong.setText(title);
+//                        myHandler.postDelayed(UpdateSongTime, 100);
+//
+//                        //progressBar.dismiss();
+//                    } catch (Exception e) {
+//                        //  progressBar.dismiss()\;
+//                        e.printStackTrace();
+//                        ll.setVisibility(View.GONE);
+//                        Toast.makeText(getActivity(), getString(R.string.mp3_error), Toast.LENGTH_SHORT).show();
+//                    }
+                    Intent intent = new Intent(getActivity(), VideoActivity.class);
+                    intent.putExtra(URL, "http://channelz2.mp3.zdn.vn/zv/8ae8054f0ed0fffe942066c060eb9ce5/578c2a10/2016/07/11/b/d/bd4380304ef8d79026b5e5a45a8c6665.mp4");
+                    intent.putExtra(TITLE, title);
+                    startActivity(intent);
+//http://channelz2.mp3.zdn.vn/zv/8ae8054f0ed0fffe942066c060eb9ce5/578c2a10/2016/07/11/b/d/bd4380304ef8d79026b5e5a45a8c6665.mp4
                 } else if (type.equals("Video")) {
                     Log.d(TAG, "onPassPlayLink: " + url);
                     Intent intent = new Intent(getActivity(), VideoActivity.class);

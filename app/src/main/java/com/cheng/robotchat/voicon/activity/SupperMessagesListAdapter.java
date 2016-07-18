@@ -2,6 +2,7 @@ package com.cheng.robotchat.voicon.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,6 @@ public class SupperMessagesListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<SupperLink> messagesItems;
     private IsShowMedia isShowMedia;
-
     public SupperMessagesListAdapter(Context context, ArrayList<SupperLink> messagesItems, IsShowMedia isShowMedia) {
         this.context = context;
         this.messagesItems = messagesItems;

@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -38,8 +39,8 @@ public class VideoActivity extends AppCompatActivity {
     private TextView tvTitle;
     private ProgressBar activity_progressBar;
     private String currentPosition ="currentPosition";
-    private WebView webview;
     private Tracker mTracker;
+    private CountDownTimer count;
     private final String  styleCss="<style>img{max-width: 100%; width:auto; height: auto;}\" +\n"+
             "                       a{color:#374046; text-decoration:none}"+
             "                    h3{font-size: 25px;color:#374046;}"+
@@ -54,7 +55,16 @@ public class VideoActivity extends AppCompatActivity {
         init();
         setValue(savedInstanceState);
         setEvent();
+        count = new CountDownTimer(60000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                Log.d(TAG, "onTick: "+millisUntilFinished);
+            }
 
+            public void onFinish() {
+                Log.d(TAG, "onFinish: "+MainCreenActivity.isShow);
+               MainCreenActivity.isShow=true;
+            }
+        }.start();
     }
 
     public void sendScreenImageName(String tag) {
@@ -75,15 +85,8 @@ public class VideoActivity extends AppCompatActivity {
         videoView = (CustomVideoView) findViewById(R.id.videoView);
         tvTitle = (TextView) findViewById(R.id.activity_tvTitle);
         activity_progressBar = (ProgressBar) findViewById(R.id.activity_progressBar);
+        activity_progressBar.setVisibility(View.VISIBLE);
         intent = getIntent();
-        webview = (WebView) findViewById(R.id.activity_webview);
-        webview.setWebViewClient(new WebViewClient());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            webview.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
-        } else {
-            webview.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
-        }
-        Log.d(TAG, "init: "+intent.getStringExtra(ChatFragment.URL));
         onReturnContent(intent.getStringExtra(ChatFragment.TITLE),intent.getStringExtra(ChatFragment.URL));
     }
 
@@ -114,12 +117,10 @@ public class VideoActivity extends AppCompatActivity {
 
 
     public void onReturnContent(String content, String videoUrl) {
-        activity_progressBar.setVisibility(View.VISIBLE);
-        tvTitle.setText(title);
+        tvTitle.setText(getString(R.string.title_video)+": "+content);
         sendScreenImageName(TAG+"-"+content);
         try {
             videoView.setVideoURI(Uri.parse(videoUrl));
-            webview.loadData(styleCss+content,"text/html; charset=UTF-8", null);
             if (mediaController == null) {
                 mediaController = new MediaController(VideoActivity.this);
                 videoView.setMediaController(mediaController);
@@ -136,6 +137,7 @@ public class VideoActivity extends AppCompatActivity {
                 videoView.seekTo(position);
                 if (position == 0) {
                     videoView.start();
+                    activity_progressBar.setVisibility(View.GONE);
                 }
                 mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
                     @Override
@@ -145,7 +147,7 @@ public class VideoActivity extends AppCompatActivity {
                 });
             }
         });
-        activity_progressBar.setVisibility(View.GONE);
+
     }
 //    @Override
 //    public void onConfigurationChanged(Configuration newConfig) {

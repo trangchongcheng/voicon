@@ -23,6 +23,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.cheng.robotchat.voicon.BaseFragment;
 import com.cheng.robotchat.voicon.activity.MainCreenActivity;
 import com.cheng.robotchat.voicon.model.User;
@@ -95,9 +96,9 @@ public class FragmentSetting extends BaseFragment {
                 nameTo = "Robot Chat";
             }
             userDataHelper.UpdateFrom(new User(1, nameFrom, language,imageFrom,nameTo));
-            Log.d(TAG, "onChange: "+userDataHelper.GetCount());
             mCallback.onUpdatelListener(true);
             mMainActivity.popFragment();
+            Toast.makeText(getActivity(), "Thành công! Tắt mở lại ứng dụng đẻ cập nhật thay đổi!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), "Vui long nhap ten 4 ki tu tro len vao!", Toast.LENGTH_SHORT).show();
         }
@@ -127,8 +128,13 @@ public class FragmentSetting extends BaseFragment {
     }
 
     public void setImageFrom(CircleImageView circleImage) {
-        Bitmap bitmap = BitmapFactory.decodeByteArray(arrUser.get(0).getmImageFrom(), 0, arrUser.get(0).getmImageFrom().length);
-        circleImage.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false));
+      //  Bitmap bitmap = BitmapFactory.decodeByteArray(arrUser.get(0).getmImageFrom(), 0, arrUser.get(0).getmImageFrom().length);
+      //  circleImage.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false));
+        Glide.with(mMainActivity)
+                .load(arrUser.get(0).getmImageFrom())
+                .asBitmap()
+                .placeholder(R.drawable.ic_avatar)
+                .into(circleImage);
     }
 
 

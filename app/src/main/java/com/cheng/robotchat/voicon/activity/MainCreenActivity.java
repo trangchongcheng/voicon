@@ -30,6 +30,9 @@ import com.facebook.share.ShareApi;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -49,6 +52,7 @@ import butterknife.ButterKnife;
  */
 public class MainCreenActivity extends AppCompatActivity implements FragmentSetting.OnUpdatelListener {
     public final String TAG = getClass().getSimpleName();
+    public static boolean isShow = false;
     private Bundle save = null;
     private ShareDialog shareDialog;
     private View rootView;
@@ -58,6 +62,7 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
     private ViewDialog alert;
     private static int RESULT_LOAD_IMAGE = 1;
     private Tracker mTracker;
+    private InterstitialAd mInterstitialAd;
     public void setContentView() {
         setContentView(R.layout.activity_maincreen);
         rootView = getWindow().getDecorView().findViewById(android.R.id.content);
@@ -73,17 +78,39 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
         setEvent();
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-8502836799800950/3557125622");
+        mInterstitialAd.setAdListener(new AdListener() {
+            public void onAdLoaded() {
+                showInterstitial();
+            }
+        });
     }
 
     public void init() {
         ButterKnife.bind(this);
-        //toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         new GPVersionChecker.Builder(this).create();
         FacebookSdk.sdkInitialize(getApplicationContext());
         shareDialog = new ShareDialog(this);
         alert = new ViewDialog();
+    }
+
+    public void showInterstitial() {
+        if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            startGame();
+        }
+    }
+
+    public void startGame() {
+        if (!mInterstitialAd.isLoading() && !mInterstitialAd.isLoaded()) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mInterstitialAd.loadAd(adRequest);
+        }
+
     }
 
     public static Bitmap getScreenShot(View view) {
@@ -227,6 +254,28 @@ public class MainCreenActivity extends AppCompatActivity implements FragmentSett
         super.onResume();
         Log.d(TAG, "onResume: ");
         sendScreenImageName(TAG);
+        if(isShow){
+            showInterstitial();
+        }
+        isShow=false;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: ");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: ");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
     }
 
     @Override
